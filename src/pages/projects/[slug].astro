@@ -1,0 +1,128 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/layout.astro";
+
+export async function getStaticPaths(){
+    const projects = await getCollection("projects");
+    return projects.map( p => (
+        {
+            params: {
+                slug: p.slug
+            }
+            , props: {
+                p
+            }
+        }
+    ))
+}
+
+
+interface Prop {
+    p: {
+        slug: string;
+        data: {
+            title: string;
+            description: string;
+        };
+        render: () => Promise< { Content: any; heading: any[] } >;
+    }
+}
+
+const { p } = Astro.props;
+const { Content, headings } = await p.render();
+
+---
+
+<Layout title={p.data.title}>
+    <div class="max-w-4xl mx-auto px-6 py-10 bg-gray-50 rounded-lg shadow-md">
+      <h1 class="text-4xl font-bold text-orange-700 mb-4 border-b-2 border-orange-300 pb-2">
+        {p.data.title}
+      </h1>
+      <p class="text-lg text-gray-700 mb-6 italic">
+        {p.data.description}
+      </p>
+  
+      <nav class="toc mb-10 bg-orange-100 p-6 rounded-lg shadow-inner">
+        <h2 class="text-2xl font-semibold mb-4 text-orange-800">Tabla de Contenidos</h2>
+        <ul class="space-y-2">
+          {headings.map((heading) => (
+            <li class={`toc-level-${heading.depth} ml-${(heading.depth - 1) * 4}`}>
+              <a href={`#${heading.slug}`} class="text-orange-700 hover:text-orange-900 transition-colors">
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+  
+      <article class="prose lg:prose-lg max-w-none bg-white p-6 rounded-lg shadow">
+        <Content />
+      </article>
+    </div>
+  </Layout>
+  
+  <style is:global>
+    /* Estilos para encabezados */
+    .prose h1 {
+      @apply text-3xl font-extrabold text-orange-600 mb-6 mt-8 border-b-2 border-orange-300 pb-2;
+    }
+    .prose h2 {
+      @apply text-2xl font-semibold text-orange-500 mb-5 mt-6 border-l-4 border-orange-200 pl-4;
+    }
+    .prose h3 {
+      @apply text-xl font-medium text-orange-400 mb-3 mt-4;
+    }
+  
+    /* Texto y párrafos */
+    .prose p {
+      @apply mb-4 text-gray-700 leading-relaxed;
+    }
+  
+    /* Listas */
+    .prose ul {
+      @apply list-disc list-inside mb-4 ml-4;
+    }
+    .prose ol {
+      @apply list-decimal list-inside mb-4 ml-4;
+    }
+    .prose li {
+      @apply mb-2 text-gray-600;
+    }
+  
+    /* Enlaces */
+    .prose a {
+      @apply text-orange-700 hover:text-orange-900 underline;
+    }
+    .prose strong {
+      @apply font-semibold text-orange-800;
+    }
+  
+    /* Código y bloques de código */
+    .prose code {
+      @apply bg-orange-50 text-orange-800 px-1 py-0.5 rounded;
+    }
+    .prose pre {
+      @apply bg-gray-900 text-gray-100 p-4 rounded-lg shadow-lg overflow-x-auto my-4;
+    }
+    .prose pre code {
+      @apply bg-transparent text-gray-100;
+    }
+  
+    /* Citas */
+    .prose blockquote {
+      @apply border-l-4 border-orange-400 pl-4 italic text-gray-600 bg-orange-50 py-2;
+    }
+  
+    /* Tablas */
+    .prose table {
+      @apply w-full border-collapse border border-orange-200 mb-4;
+    }
+    .prose th, .prose td {
+      @apply border border-orange-200 p-3 text-left;
+    }
+    .prose th {
+      @apply bg-orange-100 font-semibold;
+    }
+  </style>
+  

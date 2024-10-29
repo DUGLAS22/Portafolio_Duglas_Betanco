@@ -1,0 +1,14 @@
+---
+
+export interface Props {
+    title: string;
+    description: string;
+    link: string;
+}
+const { title, description, link } = Astro.props;
+---
+<div class="bg-blue-500 text-white p-6 rounded-lg shadow-lg hover:bg-indigo-800 hover:shadow-2xl transition duration-300 transform hover:scale-105">
+    <h3 class="font-semibold text-2xl mb-4">{title}</h3>
+    <p class="text-gray-200 text-lg mb-4 text-justify">{description}</p>
+    <a href={link} class="text-cyan-200 hover:text-cyan-400 underline text-lg">Ver más →</a>
+</div>

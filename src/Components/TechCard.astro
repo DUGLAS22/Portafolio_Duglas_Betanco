@@ -1,0 +1,19 @@
+---
+
+export interface Props {
+    title: string;
+    tech: string[];
+}
+
+const { title, tech } = Astro.props;
+
+---
+
+<div class="bg-blue-500 text-white p-6 rounded-lg shadow-lg hover:bg-indigo-800 hover:shadow-2xl transition duration-300 transform hover:scale-105">
+    <h3 class="font-semibold text-2xl mb-4 text-center">{title}</h3>
+    <ul class="list-disc list-inside space-y-2 text-lg text-justify">
+        {tech.map((t) => (
+            <li>{t}</li>
+        ))}
+    </ul>
+</div>
